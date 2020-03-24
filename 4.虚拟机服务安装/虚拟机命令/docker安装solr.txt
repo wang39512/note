@@ -1,0 +1,25 @@
+
+1.拉取镜像 docker pull solr  我版本是8.4.1
+2.启动容器 docker run -d --name mysolr -p 8983:8983 solr
+3.进入容器 docker exec -it --user root mysolr /bin/bash 
+4.新建目录 mkdir /var/solr/data/你的solrCore的名字 我就写的solr1
+5.复制配置文件 cp -r /opt/solr-8.4.1/server/solr/ configsets/_default/conf /var/solr/data/跟上面一样的solrCore名字 
+6.打开网页 新建core 名称跟上面一样 目录也一样
+
+7.ik包上传到linux上一个目录 我是上传到了/home下 
+具体命令是 sftp root@ujiuye.club 填你虚拟机的ip 然后输入密码  lpwd 可以查看你主机当前目录  lcd desktop 将目录切换到桌面 因为我Ik包在桌面  put ik包全写 /home/
+
+8.将ik包放到容器内指定目录 docker cp /home/ik包全拼 mysolr:/opt/solr-8.4.1/server/solr-webapp/webapp/WEB-INF/lib/
+
+9.将managed-schema 复制一份到宿主机 因为容器内没有vim
+
+exit 退出容器  docker cp mysolr:/var/solr/data/你的solrCore目录/conf/managed-schema /home/
+
+10.编辑 vim /home/managed-schema  将text_ik的 fieldType添加进去 
+
+11.将更改后的文件复制到容器内进行替换 docker cp /home/managed-schema mysolr:/var/solr/data/solrCore目录/conf/
+
+重启solr
+
+然后就应该没问题了
+

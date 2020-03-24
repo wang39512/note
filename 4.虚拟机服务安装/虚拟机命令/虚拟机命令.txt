@@ -1,0 +1,5 @@
+solr：cd /usr/local/solr/bin
+./solr  start  -force
+
+dubbo: cd /usr/zookeeper3/bin
+ ./zkServer.sh start

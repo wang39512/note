@@ -1,0 +1,125 @@
+2月10日笔记:
+回顾每一天的关键点:
+深入思考,针对每天的关键点
+
+day1:
+ 1.dubbo的基本原理
+   原理图
+   服务提供者启动,如何知道注册到那个注册中心呢?
+    <dubbo:protocol name="dubbo" port="20881"/>
+    <dubbo:application name="youlexuan-sellergoods-service" />
+    <dubbo:registry address="zookeeper://192.168.188.147:2181"/>
+    <dubbo:annotation package="com.offcn.sellergoods.service.impl"/>
+	服务名:youlexuan-sellergoods-service
+	注册到哪里:192.168.188.147:2181
+	注册的服务是谁:com.offcn.sellergoods.service.impl下@Serivce[com.alibaba.dubbo.config.annotation.Service]
+	
+ 2.框架搭建
+   什么样的用war,jar
+ 3.具体应用dubbo完成品牌json查询
+   关键代码:
+   关键注解:@Reference,@Reference
+ 4.优乐选系统架构图
+ 
+一句话总结: 
+	利用dubbo框架,消费者调用了服务提供者,将数据库查询到的品牌列表以json格式返回到前台
+
+day2:
+
+
+web开发理解:
+
+ 1.angularJs使用步骤,常用指令
+ 2.angularJs与后台结合完成基本增删改查
+ 
+ 发送request到指定controller接收参数,完成数据库操作response返回前台解析,渲染给用户看
+ 发送请求是谁发送的,方式都有哪些
+ 有事件作为触发条件:页面加载初始化,按钮点击事件,按钮change事件
+ 是不是向后台发送请求:页面加载触发onChange,按钮:ng-click
+ 
+ 前端断点:
+ 1.F12
+ 2.Sources/js/controllr或service对应的方法行点点
+ 后端断点:
+ debugger启动,断点是在指定的代码行点点	
+ 成长的关键:遇到问题:
+	1.思考?问题出在哪里。
+	2.通过调试手段定位?事件是不是触发了?参数是否正常传递了?接收方是否正常接收了?数据库是否正常调用了？
+	
+day3:
+ 1.js分离:从页面中分离,分层.控制器的继承:本质是什么继承
+ 2.规格:组合实体类
+ 3.规格:表有规格表,规格项表
+   操作的时候一次操作2张表 
+   前端:$scope.entity={specification:{},specificationOptionList:[{}]};
+   后端:com.offcn.group.Specification
+		private TbSpecification specification;
+		private List<TbSpecificationOption> specificationOptionList;
+   TbSpecificationMapper.xml	
+		<selectKey resultType="java.lang.Long" keyProperty="id">
+		  select LAST_INSERT_ID() as id
+		</selectKey>		
+ 4.模板表与那个表有关系呢?
+	select2多选框完成多选品牌,多选规格,品牌和规格有关系;
+	与tb_item_cat有关系.分类表中的type_id就是模板表的id
+	模板表存储了3个json格式的字符串,前台显示需要转换
+	
+day4.	Spring Security
+
+	web.xml
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>	
+	管理员如何完成验证的
+	<!--配置不拦截-->
+	<!--配置拦截规则-->
+	拦截什么/**表示拦截所有,具有ROLE_ADMIN角色的放行
+	<!--配置认证-->
+	配置账号密码,登录之后,赋予ROLE_ADMIN
+	数据库中的商家如何验证的
+	<!--配置不拦截-->
+	<!--配置拦截规则-->
+	拦截什么/**表示拦截所有,具有ROLE_SELLER角色的放行
+	<!--配置认证--> 
+	com.offcn.service.UserDetailsServiceImpl通过sellerService查询数据库之后再赋予ROLE_SELLER
+	spring在依赖注入的时候不只有注解一种，set
+	
+day5.
+	商品分类表:parent_id
+	spu:iphone 11 pro max
+	sku:
+		256G 暗夜绿色 。。。。库存数:36
+		128G 暗夜绿色 。。。。库存数:16
+		白色  0
+	上传图片:
+    this.upload=function () {
+
+        var formData = new FormData();
+        formData.append("file", file.files[0]);
+        return $http({
+            method: "POST",
+            url: '../upload.do',
+            data: formData,
+            headers: {'Content-type': undefined},
+            transformRequest: angular.identity
+        });
+    }	
+	
+day6.
+	三级联动:一级靠初始化触发传0一级查询
+	二级,三级靠$watch(angular的内容函数,看,观察,盯梢)上一级id的变化触发
+	
+	选择分类,有对应的品牌,分类,扩展属性。不能查询所有的.模板表存在的真正意义
+	是否启用规格:ng-true-value
+	以上均是为了完成$scope封装参数
+	$scope.entity = {goods:{},goodsDesc:{specificationItems:[],itemImages:[]}};
+	
+	后端数据:com.offcn.group.Goods
+    private TbGoods goods;
+    private TbGoodsDesc goodsDesc;
+    private List<TbItem> itemList;	

@@ -1,0 +1,15 @@
+192.168.152.130
+192.168.152.131
+
+
+
+
+ // 图片上传
+	$scope.fileUpload = function () {
+        fileUpload.fileUpload().success(
+			function (response) {
+                    $scope.entity_image.url = response;
+                    console.log($scope.entity_image.url);
+            }
+		)
+    }
